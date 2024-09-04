@@ -21,7 +21,7 @@ This project demonstrates the SHA-256 cryptographic hash function implemented fr
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/e-d-i-n-i/sha256-from-scratch-webapp.git
+   git clone https://github.com/e-d-i-n-i/sha256-webapp.git
    cd sha256-webapp
    ```
 
