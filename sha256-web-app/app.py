@@ -102,5 +102,26 @@ def sha256_api():
     hash_value = sha256(message)
     return jsonify({"message": message, "sha256": hash_value})
 
+@app.route('/decrypt', methods=['POST'])
+def decrypt_api():
+    data = request.get_json()
+    target_hash = data.get('hash')
+    if not target_hash:
+        return jsonify({"error": "No hash provided"}), 400
+    
+    # Load the word library
+    try:
+        with open('word_library.txt', 'r') as file:
+            words = file.readlines()
+    except FileNotFoundError:
+        return jsonify({"error": "Word library not found"}), 500
+
+    for word in words:
+        word = word.strip()  # Remove any surrounding whitespace
+        if sha256(word) == target_hash:
+            return jsonify({"message": word, "sha256": target_hash})
+    
+    return jsonify({"error": "No matching word found"}), 404
+
 if __name__ == '__main__':
     app.run(debug=True)
