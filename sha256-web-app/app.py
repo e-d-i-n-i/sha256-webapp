@@ -5,18 +5,6 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)  # This will allow cross-origin requests
 
-@app.route('/sha256', methods=['POST'])
-def generate_sha256():
-    data = request.get_json()
-    message = data.get('message', '')
-    hash_object = sha256(message.encode())
-    hex_dig = hash_object.hexdigest()
-    return jsonify({'sha256': hex_dig})
-
-if __name__ == '__main__':
-    app.run(debug=True)
-    
-# Your SHA-256 implementation code goes here
 def preprocess_message(message):
     message_bin = ''.join(format(ord(char), '08b') for char in message)
     original_length = len(message_bin)
