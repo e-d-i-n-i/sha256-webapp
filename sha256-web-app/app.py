@@ -1,37 +1,10 @@
 from flask import Flask, request, jsonify
+from hashlib import sha256
 from flask_cors import CORS
-import hashlib
-import itertools
-import string
 
 app = Flask(__name__)
 CORS(app)  # This will allow cross-origin requests
 
-# Function to hash text using SHA-256
-def sha256_hash(text):
-    return hashlib.sha256(text.encode()).hexdigest()
-
-# Brute-force decryption using trial and error
-@app.route('/decrypt', methods=['POST'])
-def brute_force_sha256():
-    data = request.get_json()
-    target_hash = data.get('hash', '')
-
-    # Define character set (lowercase, uppercase, digits, etc.)
-    chars = string.ascii_letters + string.digits + string.punctuation
-    max_length = 6  # You can change the max length for the brute-force attempt
-
-    # Brute-force trial and error
-    for length in range(1, max_length + 1):
-        for attempt in itertools.product(chars, repeat=length):
-            attempt_str = ''.join(attempt)
-            hashed_attempt = sha256_hash(attempt_str)
-            if hashed_attempt == target_hash:
-                return jsonify({'text': attempt_str, 'message': 'Decryption successful'})
-
-    return jsonify({'error': 'Unable to decrypt with brute-force'}), 404
-
-# SHA-256 generation
 @app.route('/sha256', methods=['POST'])
 def generate_sha256():
     data = request.get_json()
@@ -40,11 +13,10 @@ def generate_sha256():
     hex_dig = hash_object.hexdigest()
     return jsonify({'sha256': hex_dig})
 
-
 if __name__ == '__main__':
     app.run(debug=True)
-
-# SHA-256 implementation code goes here
+    
+# Your SHA-256 implementation code goes here
 def preprocess_message(message):
     message_bin = ''.join(format(ord(char), '08b') for char in message)
     original_length = len(message_bin)
