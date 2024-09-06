@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SHA-256 Hash Generator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 50px;
+      }
+      input,
+      button {
+        padding: 10px;
+        margin: 5px;
+        font-size: 1rem;
+      }
+      #result {
+        margin-top: 20px;
+        font-size: 1.2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SHA-256 Hash Generator</h1>
+    <input type="text" id="message" placeholder="Enter a message" />
+    <button onclick="generateHash()">Generate SHA-256 Hash</button>
+    <div id="result"></div>
+
+    <script>
+      function generateHash() {
+        const message = document.getElementById("message").value;
+        if (!message) {
+          alert("Please enter a message");
+          return;
+        }
+
+        fetch("http://127.0.0.1:5000/sha256", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById(
+              "result"
+            ).innerText = `SHA-256: ${data.sha256}`;
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+    </script>
+  </body>
+</html>
