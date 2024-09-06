@@ -3,50 +3,86 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SHA-256 Hash Generator</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 50px;
-      }
-      input,
-      button {
-        padding: 10px;
-        margin: 5px;
-        font-size: 1rem;
-      }
-      #result {
-        margin-top: 20px;
-        font-size: 1.2rem;
-      }
-    </style>
+    <title>SHA-256 Web App</title>
   </head>
   <body>
-    <h1>SHA-256 Hash Generator</h1>
-    <input type="text" id="message" placeholder="Enter a message" />
-    <button onclick="generateHash()">Generate SHA-256 Hash</button>
-    <div id="result"></div>
+    <h1>SHA-256 Hash Generator & Brute-Force Decryptor</h1>
+
+    <!-- Hash Generation Section -->
+    <h2>Hash Generation</h2>
+    <input type="text" id="textInput" placeholder="Enter text to hash" />
+    <button onclick="generateHash()">Generate Hash</button>
+    <p>Hash: <span id="hashOutput"></span></p>
+
+    <!-- Hash Decryption Section -->
+    <h2>Brute-Force Decryption</h2>
+    <input type="text" id="hashInput" placeholder="Enter hash to brute-force" />
+    <button onclick="decryptHash()">Decrypt Hash</button>
+    <p>Original Text: <span id="decryptOutput"></span></p>
 
     <script>
+      // Hash generation
       function generateHash() {
-        const message = document.getElementById("message").value;
-        if (!message) {
-          alert("Please enter a message");
-          return;
-        }
-
+        const text = document.getElementById("textInput").value;
         fetch("http://127.0.0.1:5000/sha256", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message }),
+          body: JSON.stringify({ message: text }),
         })
           .then((response) => response.json())
           .then((data) => {
-            document.getElementById(
-              "result"
-            ).innerText = `SHA-256: ${data.sha256}`;
+            document.getElementById("hashOutput").textContent = data.sha256;
+          });
+      }
+
+      // Brute-force decryption
+      function bruteForceHash() {
+        const hash = document.getElementById("hashInput").value;
+        fetch("http://127.0.0.1:5000/decrypt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ hash: hash }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("decryptOutput").textContent =
+              data.text || "Not Found";
           })
-          .catch((error) => console.error("Error:", error));
+          .catch((err) => {
+            document.getElementById("decryptOutput").textContent =
+              "Error: Unable to decrypt.";
+          });
+      }
+
+      // Brute-force decryption function 2
+      async function decryptHash() {
+        const hash = document.getElementById("hashInput").value;
+
+        try {
+          const response = await fetch("http://127.0.0.1:5000/decrypt", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ hash: hash }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+          }
+
+          const result = await response.json();
+          if (result.text) {
+            document.getElementById(
+              "resultText"
+            ).textContent = `Decrypted Text: ${result.text}`;
+          } else {
+            document.getElementById("resultText").textContent =
+              "Unable to decrypt the hash";
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
       }
     </script>
   </body>
