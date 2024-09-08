@@ -10,14 +10,14 @@ html {
 }
 
 body {
-  background: #d2e0fb78;
+  background: #d2e0fb50;
   font-family: "Raleway";
   height: 100%;
   padding: 5vh;
 }
 body h1 {
   text-align: center;
-  color: #2f6bcc;
+  color: #1a4c9d;
   font-weight: 600;
   padding: 40px 0 20px 0;
   margin-bottom: 20px;
