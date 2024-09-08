@@ -12,6 +12,11 @@ textarea {
   resize: vertical;
 }
 
+input[type="text"]:focus,
+textarea:focus {
+  outline-color: #4f80cf;
+}
+
 label {
   padding: 12px 12px 12px 0;
   display: inline-block;
@@ -25,6 +30,7 @@ input[type="button"] {
   border-radius: 4px;
   cursor: pointer;
   margin-top: 10px;
+  font-size: larger;
 }
 
 input[type="button"]:hover {

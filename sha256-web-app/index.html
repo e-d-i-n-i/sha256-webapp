@@ -3,6 +3,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SHA-256</title>
+    <link rel="icon" href="./static/security.png" type="image/x-icon" />
     <link href="./static/styles.css" rel="stylesheet" />
     <link href="./static/form.css" rel="stylesheet" />
   </head>
@@ -75,7 +76,7 @@
                 <textarea
                   id="result"
                   name="subject"
-                  placeholder="Hashed Message"
+                  placeholder="Hashed message..."
                   style="height: 100px; resize: none; font-size: larger"
                 ></textarea>
               </div>
@@ -86,7 +87,7 @@
                 onclick="generateHash()"
                 class="col-75"
                 type="button"
-                value="Generate"
+                value="Encrypt"
               />
             </div>
           </div>
@@ -110,7 +111,7 @@
                 <textarea
                   id="decryption-result"
                   name="subject"
-                  placeholder="Original Message"
+                  placeholder="Original message..."
                   style="height: 100px; resize: none; font-size: larger"
                 ></textarea>
               </div>
@@ -121,13 +122,14 @@
                 onclick="decryptHash()"
                 class="col-75"
                 type="button"
-                value="Break"
+                value="Decrypt"
               />
             </div>
           </div>
         </section>
       </div>
     </div>
+
     <script>
       function generateHash() {
         const message = document.getElementById("message").value;
