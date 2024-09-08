@@ -1,6 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify # type: ignore
 from hashlib import sha256
-from flask_cors import CORS
+from flask_cors import CORS # type: ignore
 
 app = Flask(__name__)
 CORS(app)  # This will allow cross-origin requests
