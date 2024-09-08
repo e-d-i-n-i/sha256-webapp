@@ -5,6 +5,7 @@ from flask_cors import CORS # type: ignore
 app = Flask(__name__)
 CORS(app)  # This will allow cross-origin requests
 
+# Makes sure the message length is a multiple of 512 bits  (by adding 1 and padding with 0s)
 def preprocess_message(message):
     message_bin = ''.join(format(ord(char), '08b') for char in message)
     original_length = len(message_bin)
@@ -14,27 +15,35 @@ def preprocess_message(message):
     message_bin += format(original_length, '064b')
     return message_bin
 
+# Performs a bitwise right operation of a 32-bit value. Wesagn Step
 def right_rotate(value, bits):
     return (value >> bits) | (value << (32 - bits)) & 0xFFFFFFFF
 
+# Choose Function
 def sha256_ch(x, y, z):
     return (x & y) ^ (~x & z)
 
+# Majority Function
 def sha256_maj(x, y, z):
     return (x & y) ^ (x & z) ^ (y & z)
 
+# Compression Funtion : compress and mix the input bits further scrambling the bits indifferent ways
 def sha256_sum0(x):
     return right_rotate(x, 2) ^ right_rotate(x, 13) ^ right_rotate(x, 22)
 
+# Compression Function
 def sha256_sum1(x):
     return right_rotate(x, 6) ^ right_rotate(x, 11) ^ right_rotate(x, 25)
 
+# Bitwise Mixing Functions : further scrambles the bits of x to create more complexity
 def sha256_sigma0(x):
     return right_rotate(x, 7) ^ right_rotate(x, 18) ^ (x >> 3)
 
+# Bitwise Mixing Functions
 def sha256_sigma1(x):
     return right_rotate(x, 17) ^ right_rotate(x, 19) ^ (x >> 10)
 
+# A predefined list of 64 constants used in the SHA-256 algorithm.
 K = [
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
     0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
@@ -49,6 +58,7 @@ K = [
     0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ]
 
+# Processes a 512-bit chunk of the message, performing 64 rounds of bitwise operations.
 def process_chunk(chunk, H):
     words = [int(chunk[i:i+32], 2) for i in range(0, len(chunk), 32)]
     for i in range(16, 64):
@@ -81,6 +91,7 @@ def process_chunk(chunk, H):
     H[7] = (H[7] + h) & 0xFFFFFFFF
     return H
 
+# Core Function
 def sha256(message):
     message_bin = preprocess_message(message)
     H = [
@@ -93,6 +104,7 @@ def sha256(message):
     hash_value = ''.join(format(h, '08x') for h in H)
     return hash_value
 
+# API endpoint
 @app.route('/sha256', methods=['POST'])
 def sha256_api():
     data = request.get_json()
@@ -102,6 +114,7 @@ def sha256_api():
     hash_value = sha256(message)
     return jsonify({"message": message, "sha256": hash_value})
 
+# API endpoint
 @app.route('/decrypt', methods=['POST'])
 def decrypt_api():
     data = request.get_json()
@@ -123,5 +136,6 @@ def decrypt_api():
     
     return jsonify({"error": "No matching word found"}), 404
 
+# Ensures the flask app start and run on local dev server with debugging features on!
 if __name__ == '__main__':
     app.run(debug=True)
